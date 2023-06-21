@@ -1,0 +1,162 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Login extends JPanel {
+    private JTextField usernameField;
+    private JPasswordField passwordField;
+    private JComboBox<String> userTypeComboBox;
+    private JButton loginButton;
+
+    public Login() {
+        setLayout(new BorderLayout(10, 10));
+
+        // Panel pentru partea de sus
+        JPanel topPanel = new JPanel(new GridLayout(3, 2, 10, 10));
+        add(topPanel, BorderLayout.CENTER);
+
+        JLabel userTypeLabel = new JLabel("User Type:");
+        String[] userTypes = { "Administrator", "Cursant" };
+        userTypeComboBox = new JComboBox<>(userTypes);
+
+        JLabel usernameLabel = new JLabel("Username:");
+        usernameField = new JTextField();
+
+        JLabel passwordLabel = new JLabel("Password:");
+        passwordField = new JPasswordField();
+        
+        topPanel.add(userTypeLabel);
+        topPanel.add(userTypeComboBox);
+        topPanel.add(usernameLabel);
+        topPanel.add(usernameField);
+        topPanel.add(passwordLabel);
+        topPanel.add(passwordField);
+
+        // Panel pentru partea de jos
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        add(bottomPanel, BorderLayout.SOUTH);
+
+        loginButton = new JButton("Login");
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loginButtonActionPerformed(e);
+            }
+        });
+
+        bottomPanel.add(loginButton);
+    }
+
+    private void loginButtonActionPerformed(ActionEvent e) {
+        String username = usernameField.getText();
+        String password = new String(passwordField.getPassword());
+        String userType = (String) userTypeComboBox.getSelectedItem();
+
+        if (userType.equals("Administrator")) {
+            JOptionPane.showMessageDialog(Login.this, "Esti conectat ca administrator!");
+        } else if (userType.equals("Cursant")) {
+            if (username.equals("student") && password.equals("student")) {
+                showOptions(false);
+            } else {
+                JOptionPane.showMessageDialog(Login.this, "Username sau parola gresita!");
+            }
+        }
+    }
+
+    private void showOptions(boolean isAdmin) {
+        removeAll();
+        setLayout(new GridLayout(4, 1, 10, 10));
+
+        if (!isAdmin) {
+            JButton partePracticaButton = new JButton("Parte Practică");
+            partePracticaButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showPartePractica();
+                }
+            });
+            add(partePracticaButton);
+        }
+
+        JButton listarePaginiButton = new JButton("Listare pagini");
+        listarePaginiButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(Login.this, "Paginile au fost imprimate cu succes!");
+            }
+        });
+        add(listarePaginiButton);
+
+        JButton parteTeoreticaButton = new JButton("Parte Teoretică");
+        parteTeoreticaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ParteaTeoretica window = new ParteaTeoretica(true);
+                window.setVisible(true);
+                JOptionPane.showMessageDialog(null, "Ați deschis partea teoretică.");
+            }
+        });
+        add(parteTeoreticaButton);
+
+        if (isAdmin) {
+            JButton gestionareUtilizatoriButton = new JButton("Gestionare utilizatori");
+            gestionareUtilizatoriButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JOptionPane.showMessageDialog(Login.this, "Gestionare utilizatori");
+                }
+            });
+            add(gestionareUtilizatoriButton);
+        }
+
+        revalidate();
+        repaint();
+    }
+
+    private void showPartePractica() {
+        removeAll();
+        setLayout(new BorderLayout());
+
+        JLabel categoriaLabel = new JLabel("Selectează categoria de permis:");
+        String[] categoriiPermis = { "A", "B", "C", "D", "Tr" };
+        JComboBox<String> categoriiComboBox = new JComboBox<>(categoriiPermis);
+
+        JButton incepeButton = new JButton("Începe Chestionar");
+        incepeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Chestionar chestionarWindow = new Chestionar();
+                chestionarWindow.setVisible(true);
+                JOptionPane.showMessageDialog(null, "Ați deschis secțiunea de chestionare.");
+            }
+        });
+
+        JPanel partePracticaPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        partePracticaPanel.add(categoriaLabel);
+        partePracticaPanel.add(categoriiComboBox);
+        partePracticaPanel.add(incepeButton);
+
+        add(partePracticaPanel, BorderLayout.CENTER);
+
+        revalidate();
+        repaint();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JFrame frame = new JFrame("Login");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+                Login loginPanel = new Login();
+                frame.add(loginPanel);
+
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            }
+        });
+    }
+}
